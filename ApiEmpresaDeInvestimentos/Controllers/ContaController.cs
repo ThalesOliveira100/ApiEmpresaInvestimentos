@@ -30,7 +30,6 @@ namespace ApiEmpresaDeInvestimentos.Controllers
             ReadContaDto readDto = _contaService.AdicionaConta(contaDto);
 
             return CreatedAtAction(nameof(RecuperaConta), new { Id = readDto.Id }, readDto);
-
         }
 
         [HttpGet]
