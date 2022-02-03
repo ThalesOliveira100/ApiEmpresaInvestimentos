@@ -1,6 +1,7 @@
 ﻿using ApiEmpresaDeInvestimentos.Data;
 using ApiEmpresaDeInvestimentos.Data.Dtos.Cliente;
 using ApiEmpresaDeInvestimentos.Models;
+using ApiEmpresaDeInvestimentos.Repositorys;
 using AutoMapper;
 using FluentResults;
 using System;
@@ -13,68 +14,52 @@ namespace ApiEmpresaDeInvestimentos.Services
     public class ClienteService
     {
         private IMapper _mapper;
-        private AppDbContext _context;
+        private ClienteRepository _clienteRepository;
 
-        public ClienteService(IMapper mapper, AppDbContext context)
+        public ClienteService(IMapper mapper, ClienteRepository clienteRepository)
         {
             _mapper = mapper;
-            _context = context;
+            _clienteRepository = clienteRepository;
         }
 
-        public ReadClienteDto AdicionaCliente(CreateClienteDto clienteDto)
+        public ReadClienteDto AdicionarCliente(CreateClienteDto clienteDto)
         {
-            Clientes cliente = _mapper.Map<Clientes>(clienteDto);
-            _context.Clientes.Add(cliente);
-            _context.SaveChanges();
+            Cliente cliente = _mapper.Map<Cliente>(clienteDto);
+            _clienteRepository.AdicionarCliente(cliente);
 
             return _mapper.Map<ReadClienteDto>(cliente);
         }
 
-        public List<ReadClienteDto> RecuperaCliente()
+        public List<ReadClienteDto> RecuperarTodosOsClientes()
         {
-            List<Clientes> clientes = _context.Clientes.ToList();
+            List<Cliente> clientes = _clienteRepository.RecuperarTodosOsClientes();
 
             return _mapper.Map<List<ReadClienteDto>>(clientes);
         }
 
-        public ReadClienteDto RecuperaCliente(int id)
+        public ReadClienteDto RecuperarClientePorId(Guid id)
         {
-            Clientes cliente = _context.Clientes.FirstOrDefault(cliente => cliente.Id == id);
+            Cliente cliente = _clienteRepository.RecuperarClientePorId(id);
 
             return _mapper.Map<ReadClienteDto>(cliente);
         }
 
-        public Result AtualizaCliente(int id, UpdateClienteDto clienteDto)
+        public Result AtualizarClientePorId(Guid id, UpdateClienteDto clienteDto)
         {
-            Clientes cliente = _context.Clientes.FirstOrDefault(cliente => cliente.Id == id);
-            
-            if (clienteDto == null)
+            Cliente cliente = _clienteRepository.RecuperarClientePorId(id);
+            if (cliente == null)
             {
                 return Result.Fail("Cliente não encontrado");
             }
             _mapper.Map(clienteDto, cliente);
-            _context.SaveChanges();
+            _clienteRepository.SalvaAlteracoes();
 
             return Result.Ok();
         }
 
-        public Result DeletaCliente(int id)
+        public Result DeletarClientePorId(Guid id)
         {
-            Clientes cliente = _context.Clientes.FirstOrDefault(cliente => cliente.Id == id);
-
-            if (cliente == null) return Result.Fail("Cliente não encontrado");
-
-            // Verifica se há uma conta com o clienteId no banco de dados, se tiver ela tambem é excluida.
-            Contas conta = _context.Contas.FirstOrDefault(conta => conta.ClienteId == cliente.Id);
-            if (conta != null)
-            {
-                _context.Remove(conta);
-            }
-
-            _context.Remove(cliente);
-            _context.SaveChanges();
-
-            return Result.Ok();
+            return _clienteRepository.DeletarClientePorId(id);
         }
     }
 }

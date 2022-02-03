@@ -11,9 +11,9 @@ namespace ApiEmpresaDeInvestimentos.Data.Dtos.Deposito
     {
         [Key]
         [Required]
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         [Required]
-        public int ContaDestinoId { get; set; }
+        public Guid ContaDestinoId { get; set; }
         [Required]
         [Range(1, 1000000, ErrorMessage = "O valor do deposito deve ser maior que 1 e não pode exceder 1.000.000")]
         public double Valor { get; set; }

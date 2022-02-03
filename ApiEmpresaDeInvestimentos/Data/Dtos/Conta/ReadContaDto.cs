@@ -11,13 +11,13 @@ namespace ApiEmpresaDeInvestimentos.Data.Dtos.Conta
     {
         [Key]
         [Required]
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         [Required(ErrorMessage = "O campo número é obrigatório")]
         public string Numero { get; set; }
         [Required(ErrorMessage = "O campo agência é obrigatório")]
         public string Agencia { get; set; }
         [Required(ErrorMessage = "O campo ClienteId é obrigatório")]
-        public int ClienteId { get; set; }
+        public Guid ClienteId { get; set; }
         public double Saldo { get; set; }
     }
 }

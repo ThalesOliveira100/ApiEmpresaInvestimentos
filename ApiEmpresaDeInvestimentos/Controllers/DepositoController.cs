@@ -21,45 +21,49 @@ namespace ApiEmpresaDeInvestimentos.Controllers
         }
 
         [HttpPost]
-        public IActionResult AdicionaDeposito([FromBody] CreateDepositoDto depositoDto)
+        public IActionResult AdicionarDeposito([FromBody] CreateDepositoDto depositoDto)
         {
-            ReadDepositoDto readDto = _depositoService.AdicionaDeposito(depositoDto);
+            ReadDepositoDto readDto = _depositoService.AdicionarDeposito(depositoDto);
+            if (readDto == null)
+            {
+                return BadRequest("Conta não encontrada");
+            }
 
-            return CreatedAtAction(nameof(RecuperaDeposito), new { Id = readDto.Id }, readDto);
+            return CreatedAtAction(nameof(RecuperarDepositoPorId), new { Id = readDto.Id }, readDto);
         }
 
         [HttpGet]
-        public IActionResult RecuperaDeposito()
+        public IActionResult RecuperarTodosOsDeposito()
         {
-            List<ReadDepositoDto> readDto = _depositoService.RecuperaDeposito();
+            List<ReadDepositoDto> readDto = _depositoService.RecuperarTodosOsDepositos();
 
             return Ok(readDto);
         }
 
         [HttpGet("{id}")]
-        public IActionResult RecuperaDeposito(int id)
+        public IActionResult RecuperarDepositoPorId(Guid id)
         {
-            ReadDepositoDto readDto = _depositoService.RecuperaDeposito(id);
+            ReadDepositoDto readDto = _depositoService.RecuperarDepositoPorId(id);
 
             if (readDto == null) return NotFound();
             return Ok(readDto);
         }
 
         [HttpPut("{id}")]
-        public IActionResult AtualizaDeposito(int id, UpdateDepositoDto depositoDto)
+        public IActionResult AtualizarDepositoPorId(Guid id, UpdateDepositoDto depositoDto)
         {
-            Result resultado = _depositoService.AtualizaDeposito(id, depositoDto);
+            Result resultado = _depositoService.AtualizarDepositoPorId(id, depositoDto);
 
-            if (resultado.IsFailed) return NotFound(resultado.Errors);
+            if (resultado.IsFailed) return NotFound(resultado.Reasons);
             return NoContent();
         }
 
         [HttpDelete("{id}")]
-        public IActionResult DeletaDeposito(int id)
+        public IActionResult DeletarDepositoPorId(Guid id)
         {
-            Result resultado = _depositoService.DeletaDeposito(id);
+            Result resultado = _depositoService.DeletarDepositoPorId(id);
 
-            if (resultado.IsFailed) return NotFound();
+            if (resultado.IsFailed) return NotFound(resultado.Reasons);
             return NoContent();
         }
     }

@@ -1,6 +1,7 @@
 ﻿using ApiEmpresaDeInvestimentos.Data;
 using ApiEmpresaDeInvestimentos.Data.Dtos.Deposito;
 using ApiEmpresaDeInvestimentos.Models;
+using ApiEmpresaDeInvestimentos.Repositorys;
 using AutoMapper;
 using FluentResults;
 using Microsoft.AspNetCore.Mvc;
@@ -14,89 +15,60 @@ namespace ApiEmpresaDeInvestimentos.Services
     public class DepositoService
     {
         private IMapper _mapper;
-        private AppDbContext _context;
+        private DepositoRepository _depositoRepository;
 
-        public DepositoService(IMapper mapper, AppDbContext context)
+        public DepositoService(IMapper mapper, DepositoRepository depositoRepository)
         {
             _mapper = mapper;
-            _context = context;
+            _depositoRepository = depositoRepository;
         }
 
-        public ReadDepositoDto AdicionaDeposito(CreateDepositoDto depositoDto)
+        public ReadDepositoDto AdicionarDeposito(CreateDepositoDto depositoDto)
         {
-            Depositos deposito = _mapper.Map<Depositos>(depositoDto);
-            Contas conta = _context.Contas.FirstOrDefault(conta => conta.Id == deposito.ContaDestinoId);
+            Deposito deposito = _mapper.Map<Deposito>(depositoDto);
+            Result resultado = _depositoRepository.AdicionarDeposito(deposito);
 
-            if (conta != null)
-            {
-                conta.Saldo += deposito.Valor;
-                _context.Depositos.Add(deposito);
-                _context.SaveChanges();
-
-                return _mapper.Map<ReadDepositoDto>(deposito);
-            }
-            return null;
-        }
-
-        public ReadDepositoDto RecuperaDeposito(int id)
-        {
-            Depositos deposito = _context.Depositos.FirstOrDefault(deposito => deposito.Id == id);
+            if (resultado.IsFailed) return null;
 
             return _mapper.Map<ReadDepositoDto>(deposito);
         }
 
-        public List<ReadDepositoDto> RecuperaDeposito()
+        public ReadDepositoDto RecuperarDepositoPorId(Guid id)
         {
-            List<Depositos> depositos = _context.Depositos.ToList();
+            Deposito deposito = _depositoRepository.RecuperarDepositoPorId(id);
+
+            return _mapper.Map<ReadDepositoDto>(deposito);
+        }
+
+        public List<ReadDepositoDto> RecuperarTodosOsDepositos()
+        {
+            List<Deposito> depositos = _depositoRepository.RecuperarTodosOsDepositos();
 
             return _mapper.Map<List<ReadDepositoDto>>(depositos);
         }
 
-        public Result AtualizaDeposito(int id, [FromBody]UpdateDepositoDto depositoDto)
+        public Result AtualizarDepositoPorId(Guid id, [FromBody]UpdateDepositoDto depositoDto)
         {
-            Depositos deposito = _context.Depositos.FirstOrDefault(deposito => deposito.Id == id);
+            Deposito deposito = _depositoRepository.RecuperarDepositoPorId(id);
 
             if (deposito == null)
             {
                 return Result.Fail("Deposito não encontrado");
             }
 
-            Contas conta = _context.Contas.FirstOrDefault(conta => conta.Id == deposito.ContaDestinoId);
+            Result resultado = _depositoRepository.AtualizarDepositoPorId(id, depositoDto);
 
-            if (conta != null)
-            {
-                conta.Saldo -= deposito.Valor;
-                conta.Saldo += depositoDto.Valor;
-                _mapper.Map(depositoDto, deposito);
-                _context.SaveChanges();
+            if (resultado.IsFailed) return resultado;
 
-                return Result.Ok();
-            }
-
-            return Result.Fail("Conta não encontrada");
-        }
-
-        public Result DeletaDeposito(int id)
-        {
-            Depositos deposito = _context.Depositos.FirstOrDefault(deposito => deposito.Id == id);
-
-            if (deposito == null)
-            {
-                return Result.Fail("Deposito não encontrado");
-            }
-
-            // Remove o saldo da conta onde o deposito foi destinado e exclui o registro do deposito.
-            Contas conta = _context.Contas.FirstOrDefault(conta => conta.Id == deposito.ContaDestinoId);
-            
-            if(conta != null)
-            {
-                conta.Saldo -= deposito.Valor;
-            }
-            
-            _context.Remove(deposito);
-            _context.SaveChanges();
+            _mapper.Map(depositoDto, deposito);
+            _depositoRepository.SalvarAlteracoes();
 
             return Result.Ok();
+        }
+
+        public Result DeletarDepositoPorId(Guid id)
+        {
+            return _depositoRepository.DeletarDepositoPorId(id);
         }
     }
 }

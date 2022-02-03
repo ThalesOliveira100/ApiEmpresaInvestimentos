@@ -12,9 +12,9 @@ namespace ApiEmpresaDeInvestimentos.Profiles
     {
         public ContaProfile()
         {
-            CreateMap<CreateContaDto, Contas>();
-            CreateMap<Contas, ReadContaDto>();
-            CreateMap<UpdateContaDto, Contas>();
+            CreateMap<CreateContaDto, Conta>();
+            CreateMap<Conta, ReadContaDto>();
+            CreateMap<UpdateContaDto, Conta>();
         }
     }
 }

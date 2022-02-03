@@ -23,47 +23,46 @@ namespace ApiEmpresaDeInvestimentos.Controllers
             _contaService = contaService;
         }
 
-
         [HttpPost]
-        public IActionResult AdicionaConta([FromBody]CreateContaDto contaDto)
+        public IActionResult AdicionarConta([FromBody]CreateContaDto contaDto)
         {
-            ReadContaDto readDto = _contaService.AdicionaConta(contaDto);
+            ReadContaDto readDto = _contaService.AdicionarConta(contaDto);
 
-            return CreatedAtAction(nameof(RecuperaConta), new { Id = readDto.Id }, readDto);
+            return CreatedAtAction(nameof(RecuperarContaPorId), new { Id = readDto.Id }, readDto);
         }
 
         [HttpGet]
-        public IActionResult RecuperaConta()
+        public IActionResult RecuperarTodasAsContas()
         {
-            List<ReadContaDto> readDto = _contaService.RecuperaConta();
+            List<ReadContaDto> readDto = _contaService.RecuperarTodasAsContas();
 
             return Ok(readDto);
         }
 
         [HttpGet("{id}")]
-        public IActionResult RecuperaConta(int id)
+        public IActionResult RecuperarContaPorId(Guid id)
         {
-            ReadContaDto readDto = _contaService.RecuperaConta(id);
+            ReadContaDto readDto = _contaService.RecuperarContaPorId(id);
 
             if (readDto != null) return Ok(readDto);
             return NotFound();
         }
 
         [HttpPut("{id}")]
-        public IActionResult AtualizaConta(int id, [FromBody] UpdateContaDto contaDto)
+        public IActionResult AtualizarContaPorId(Guid id, [FromBody] UpdateContaDto contaDto)
         {
-            Result resultado = _contaService.AtualizaConta(id, contaDto);
+            Result resultado = _contaService.AtualizarContaPorId(id, contaDto);
 
-            if (resultado.IsFailed) return NotFound();
+            if (resultado.IsFailed) return BadRequest(resultado.Reasons);
             return NoContent();
         }
 
         [HttpDelete("{id}")]
-        public IActionResult DeletaConta(int id)
+        public IActionResult DeletarContaPorId(Guid id)
         {
-            Result resultado = _contaService.DeletaConta(id);
+            Result resultado = _contaService.DeletarContaPorId(id);
 
-            if (resultado.IsFailed) return NotFound();
+            if (resultado.IsFailed) return BadRequest(resultado.Reasons);
             return NoContent();
         }
 

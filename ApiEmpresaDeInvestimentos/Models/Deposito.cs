@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace ApiEmpresaDeInvestimentos.Models
 {
-    public class Depositos
+    public class Deposito
     {
         [Key]
         [Required]
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         [Required]
-        public int ContaDestinoId { get; set; }
+        public Guid ContaDestinoId { get; set; }
         [Required]
         [Range(10,1000000,ErrorMessage = "O valor do deposito deve ser maior que 10 e não pode exceder 1.000.000")]
         public double Valor { get; set; }

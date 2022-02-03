@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace ApiEmpresaDeInvestimentos.Models
 {
-    public class Clientes
+    public class Cliente
     {
         [Key]
         [Required]
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         [Required(ErrorMessage ="O campo nome é obrigatório")]
         public string Nome { get; set; }
         [Required(ErrorMessage = "O campo cpf é obrigatório")]

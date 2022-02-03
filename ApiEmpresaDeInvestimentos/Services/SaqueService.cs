@@ -1,6 +1,7 @@
 ﻿using ApiEmpresaDeInvestimentos.Data;
 using ApiEmpresaDeInvestimentos.Data.Dtos.Saque;
 using ApiEmpresaDeInvestimentos.Models;
+using ApiEmpresaDeInvestimentos.Repositorys;
 using AutoMapper;
 using FluentResults;
 using System;
@@ -13,98 +14,63 @@ namespace ApiEmpresaDeInvestimentos.Services
     public class SaqueService
     {
         private IMapper _mapper;
-        private AppDbContext _context;
+        private SaqueRepository _saqueRepository;
 
-        public SaqueService(IMapper mapper, AppDbContext context)
+        public SaqueService(IMapper mapper, SaqueRepository saqueRepository)
         {
             _mapper = mapper;
-            _context = context;
+            _saqueRepository = saqueRepository;
         }
 
-        public ReadSaqueDto AdicionaSaque(CreateSaqueDto saqueDto)
+        public ReadSaqueDto AdicionarSaque(CreateSaqueDto saqueDto)
         {
-            Saques saque = _mapper.Map<Saques>(saqueDto);
-
-            if (saque.Valor <= 0)
-            {
-                return null;
-            }
-
-            Contas conta = _context.Contas.FirstOrDefault(conta => saque.ContaId == conta.Id);
-
-            if (conta.Saldo < saque.Valor)
-            {
-                return null;
-            }
-
-            conta.Saldo -= saque.Valor;
-            _context.Saques.Add(saque);
-            _context.SaveChanges();
+            var saque = _mapper.Map<Saque>(saqueDto);
+            var resultado = _saqueRepository.AdicionarSaque(saque);
+            
+            // Aqui retorna null caso dê alguma falha no saque, *Procurar melhor maneira de resolver
+            if (resultado.IsFailed) return null;
 
             return _mapper.Map<ReadSaqueDto>(saque);
- 
         }
 
-        public List<ReadSaqueDto> RecuperaSaque()
+        public List<ReadSaqueDto> RecuperarTodosOsSaques()
         {
-            List<Saques> saques = _context.Saques.ToList();
+            List<Saque> saques = _saqueRepository.RecuperarTodosOsSaques();
 
            return _mapper.Map<List<ReadSaqueDto>>(saques);
         }
 
-        public ReadSaqueDto RecuperaSaque(int id)
+        public ReadSaqueDto RecuperarSaquePorId(Guid id)
         {
-            Saques saque = _context.Saques.FirstOrDefault(saque => saque.Id == id);
+            var saque = _saqueRepository.RecuperarSaquePorId(id);
 
             return _mapper.Map<ReadSaqueDto>(saque);
         }
 
-        public Result AtualizaSaque(int id, UpdateSaqueDto saqueDto)
+        public Result AtualizarSaquePorId(Guid id, UpdateSaqueDto saqueDto)
         {
-            Saques saque = _context.Saques.FirstOrDefault(saque => saque.Id == id);
+            var saque = _saqueRepository.RecuperarSaquePorId(id);
 
-            if (saque != null)
-            {
-                Contas conta = _context.Contas.FirstOrDefault(conta => saque.ContaId == conta.Id);
-
-                if (conta != null)
-                {
-                    if (saqueDto.Valor > conta.Saldo)
-                    {
-                        return Result.Fail("O valor do saque não pode ser maior do que o saldo não conta");
-                    }
-
-                    conta.Saldo += saque.Valor;
-                    conta.Saldo -= saqueDto.Valor;
-                    _mapper.Map(saqueDto, saque);
-                    _context.SaveChanges();
-
-                    return Result.Ok();
-                }
-            }
-
-            return null;
-        }
-
-        public Result DeletaSaque(int id)
-        {
-            Saques saque = _context.Saques.FirstOrDefault(saque => saque.Id == id);
-
-            if (saque == null)
+            if (saque == null) 
             {
                 Result.Fail("Saque não encontrado");
-            }
+            } 
 
-            // Devolve o saldo da conta onde o saque foi realizado e exclui o registro do saque.
-            Contas conta = _context.Contas.FirstOrDefault(conta => conta.Id == saque.ContaId);
+            Result resultado = _saqueRepository.AtualizarSaquePorId(id, saqueDto);
+            
+            if (resultado.IsFailed) return resultado;
 
-            if (conta != null)
-            {
-                conta.Saldo += saque.Valor;
-            }
+            _mapper.Map(saqueDto, saque);
+            _saqueRepository.SalvarAlteracoes();
 
-            _context.Remove(saque);
-            _context.SaveChanges();
+            return Result.Ok();
+        }
+
+        public Result DeletarSaquePorId(Guid id)
+        {
+            Result resultado = _saqueRepository.DeletarSaquePorId(id);
+
+            if (resultado.IsFailed) return resultado;
 
             return Result.Ok();
         }

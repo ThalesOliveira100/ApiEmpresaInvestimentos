@@ -1,6 +1,7 @@
 ﻿using ApiEmpresaDeInvestimentos.Data;
 using ApiEmpresaDeInvestimentos.Data.Dtos.Conta;
 using ApiEmpresaDeInvestimentos.Models;
+using ApiEmpresaDeInvestimentos.Repositorys;
 using AutoMapper;
 using FluentResults;
 using System;
@@ -13,61 +14,52 @@ namespace ApiEmpresaDeInvestimentos.Services
     public class ContaService
     {
         private IMapper _mapper;
-        private AppDbContext _context;
+        private ContaRepository _contaRepository;
 
-        public ContaService(AppDbContext context, IMapper mapper)
+        public ContaService(ContaRepository contaRepository, IMapper mapper)
         {
-            _context = context;
+            _contaRepository = contaRepository;
             _mapper = mapper;
         }
 
-        public ReadContaDto AdicionaConta(CreateContaDto contaDto)
+        public ReadContaDto AdicionarConta(CreateContaDto contaDto)
         {
-            Contas conta = _mapper.Map<Contas>(contaDto);
-            _context.Contas.Add(conta);
-            _context.SaveChanges();
+            Conta conta = _mapper.Map<Conta>(contaDto);
+            _contaRepository.AdicionarConta(conta);
 
             return _mapper.Map<ReadContaDto>(conta);
         }
 
-        public List<ReadContaDto> RecuperaConta()
+        public List<ReadContaDto> RecuperarTodasAsContas()
         {
-            List<Contas> contas = _context.Contas.ToList();
+            List<Conta> contas = _contaRepository.RecuperarTodasAsContas();
             
             return _mapper.Map<List<ReadContaDto>>(contas);
         }
 
-        public ReadContaDto RecuperaConta(int id)
+        public ReadContaDto RecuperarContaPorId(Guid id)
         {
-            Contas conta = _context.Contas.FirstOrDefault(conta => conta.Id == id);
+            Conta conta = _contaRepository.RecuperarContaPorId(id);
             
             return _mapper.Map<ReadContaDto>(conta);
         }
 
-        public Result AtualizaConta(int id, UpdateContaDto contaDto)
+        public Result AtualizarContaPorId(Guid id, UpdateContaDto contaDto)
         {
-            Contas conta = _context.Contas.FirstOrDefault(conta => conta.Id == id);
+            Conta conta = _contaRepository.RecuperarContaPorId(id);
             if (conta == null)
             {
                 return Result.Fail("Conta não encontrada");
             }
             _mapper.Map(contaDto, conta);
-            _context.SaveChanges();
+            _contaRepository.SalvarAlteracoes();
 
             return Result.Ok();
         }
 
-        public Result DeletaConta(int id)
+        public Result DeletarContaPorId(Guid id)
         {
-            Contas conta = _context.Contas.FirstOrDefault(conta => conta.Id == id);
-            if (conta == null)
-            {
-                return Result.Fail("Conta não encontrada");
-            }
-            _context.Remove(conta);
-            _context.SaveChanges();
-
-            return Result.Ok();
+            return _contaRepository.DeletarContaPorId(id);
         }
     }
 }

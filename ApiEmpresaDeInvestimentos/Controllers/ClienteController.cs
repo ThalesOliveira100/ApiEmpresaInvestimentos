@@ -21,45 +21,45 @@ namespace ApiEmpresaDeInvestimentos.Controllers
         }
 
         [HttpPost]
-        public IActionResult AdicionaCliente([FromBody]CreateClienteDto clienteDto)
+        public IActionResult AdicionarCliente([FromBody]CreateClienteDto clienteDto)
         {
-            ReadClienteDto readDto = _clienteService.AdicionaCliente(clienteDto);
+            ReadClienteDto readDto = _clienteService.AdicionarCliente(clienteDto);
 
-            return CreatedAtAction(nameof(RecuperaCliente), new { Id = readDto.Id }, readDto);
+            return CreatedAtAction(nameof(RecuperarClientePorId), new { Id = readDto.Id }, readDto);
         }
 
         [HttpGet]
-        public IActionResult RecuperaCliente()
+        public IActionResult RecuperarTodosOsClientes()
         {
-            List<ReadClienteDto> readDto = _clienteService.RecuperaCliente();
+            List<ReadClienteDto> readDto = _clienteService.RecuperarTodosOsClientes();
 
             return Ok(readDto);
         }
 
         [HttpGet("{id}")]
-        public IActionResult RecuperaCliente(int id)
+        public IActionResult RecuperarClientePorId(Guid id)
         {
-            ReadClienteDto readDto = _clienteService.RecuperaCliente(id);
+            ReadClienteDto readDto = _clienteService.RecuperarClientePorId(id);
 
             if (readDto != null) return Ok(readDto);
             return NotFound();
         }
 
         [HttpPut("{id}")]
-        public IActionResult AtualizaCliente(int id, [FromBody] UpdateClienteDto clienteDto)
+        public IActionResult AtualizarClientePorId(Guid id, [FromBody] UpdateClienteDto clienteDto)
         {
-            Result resultado = _clienteService.AtualizaCliente(id, clienteDto);
+            Result resultado = _clienteService.AtualizarClientePorId(id, clienteDto);
 
-            if (resultado.IsFailed) return NotFound();
+            if (resultado.IsFailed) return BadRequest(resultado.Reasons);
             return NoContent();
         }
 
         [HttpDelete("{id}")]
-        public IActionResult DeletaCliente(int id)
+        public IActionResult DeletarClientePorId(Guid id)
         {
-            Result resultado = _clienteService.DeletaCliente(id);
+            Result resultado = _clienteService.DeletarClientePorId(id);
 
-            if (resultado.IsFailed) return NotFound();
+            if (resultado.IsFailed) return BadRequest(resultado.Reasons);
             return NoContent();
         }
     }

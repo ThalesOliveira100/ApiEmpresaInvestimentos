@@ -12,9 +12,9 @@ namespace ApiEmpresaDeInvestimentos.Profiles
     {
         public SaqueProfile()
         {
-            CreateMap<CreateSaqueDto, Saques>();
-            CreateMap<Saques, ReadSaqueDto>();
-            CreateMap<UpdateSaqueDto, Saques>();
+            CreateMap<CreateSaqueDto, Saque>();
+            CreateMap<Saque, ReadSaqueDto>();
+            CreateMap<UpdateSaqueDto, Saque>();
         }
     }
 }

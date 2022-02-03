@@ -12,9 +12,9 @@ namespace ApiEmpresaDeInvestimentos.Profiles
     {
         public ClienteProfile()
         {
-            CreateMap<CreateClienteDto, Clientes>();
-            CreateMap<Clientes, ReadClienteDto>();
-            CreateMap<UpdateClienteDto, Clientes>();
+            CreateMap<CreateClienteDto, Cliente>();
+            CreateMap<Cliente, ReadClienteDto>();
+            CreateMap<UpdateClienteDto, Cliente>();
         }
     }
 }

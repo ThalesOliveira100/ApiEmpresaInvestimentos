@@ -14,9 +14,9 @@ namespace ApiEmpresaDeInvestimentos.Data
 
         }
 
-        public DbSet<Contas> Contas { get; set; } 
-        public DbSet<Clientes> Clientes { get; set; }
-        public DbSet<Depositos> Depositos { get; set; }
-        public DbSet<Saques> Saques { get; set; }
+        public DbSet<Conta> Contas { get; set; } 
+        public DbSet<Cliente> Clientes { get; set; }
+        public DbSet<Deposito> Depositos { get; set; }
+        public DbSet<Saque> Saques { get; set; }
     }
 }

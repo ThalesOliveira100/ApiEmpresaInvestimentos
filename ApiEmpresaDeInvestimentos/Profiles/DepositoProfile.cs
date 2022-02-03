@@ -12,9 +12,9 @@ namespace ApiEmpresaDeInvestimentos.Profiles
     {
         public DepositoProfile()
         {
-            CreateMap<CreateDepositoDto, Depositos>();
-            CreateMap<Depositos, ReadDepositoDto>();
-            CreateMap<UpdateDepositoDto, Depositos>();
+            CreateMap<CreateDepositoDto, Deposito>();
+            CreateMap<Deposito, ReadDepositoDto>();
+            CreateMap<UpdateDepositoDto, Deposito>();
         }
     }
 }

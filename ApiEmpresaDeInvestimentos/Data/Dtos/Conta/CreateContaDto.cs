@@ -14,7 +14,7 @@ namespace ApiEmpresaDeInvestimentos.Data.Dtos.Conta
         [Required(ErrorMessage = "O campo agencia é obrigatório")]
         public string Agencia { get; set; }
         [Required(ErrorMessage = "O campo titular é obrigatório")]
-        public int ClienteId { get; set; }
+        public Guid ClienteId { get; set; }
 
     }
 }
