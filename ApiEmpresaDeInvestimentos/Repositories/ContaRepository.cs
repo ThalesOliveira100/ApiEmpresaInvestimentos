@@ -1,14 +1,15 @@
 ﻿using ApiEmpresaDeInvestimentos.Data;
 using ApiEmpresaDeInvestimentos.Models;
+using ApiEmpresaDeInvestimentos.Repositories.Interfaces;
 using FluentResults;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ApiEmpresaDeInvestimentos.Repositorys
+namespace ApiEmpresaDeInvestimentos.Repositories
 {
-    public class ContaRepository
+    public class ContaRepository : IContaRepository
     {
         private AppDbContext _context;
 

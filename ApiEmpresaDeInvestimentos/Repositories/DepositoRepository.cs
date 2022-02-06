@@ -1,15 +1,16 @@
 ﻿using ApiEmpresaDeInvestimentos.Data;
 using ApiEmpresaDeInvestimentos.Data.Dtos.Deposito;
 using ApiEmpresaDeInvestimentos.Models;
+using ApiEmpresaDeInvestimentos.Repositories.Interfaces;
 using FluentResults;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ApiEmpresaDeInvestimentos.Repositorys
+namespace ApiEmpresaDeInvestimentos.Repositories
 {
-    public class DepositoRepository
+    public class DepositoRepository : IDepositoRepository
     {
         AppDbContext _context;
 

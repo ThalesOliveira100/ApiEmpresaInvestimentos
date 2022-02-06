@@ -1,15 +1,16 @@
 ﻿using ApiEmpresaDeInvestimentos.Data;
 using ApiEmpresaDeInvestimentos.Data.Dtos.Cliente;
 using ApiEmpresaDeInvestimentos.Models;
+using ApiEmpresaDeInvestimentos.Repositories.Interfaces;
 using FluentResults;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ApiEmpresaDeInvestimentos.Repositorys
+namespace ApiEmpresaDeInvestimentos.Repositories
 {
-    public class ClienteRepository
+    public class ClienteRepository : IClienteRepository
     {
         private AppDbContext _context;
 
@@ -18,7 +19,7 @@ namespace ApiEmpresaDeInvestimentos.Repositorys
             _context = context;
         }
 
-        public void SalvaAlteracoes()
+        public void SalvarAlteracoes()
         {
             _context.SaveChanges();
         }
@@ -26,7 +27,7 @@ namespace ApiEmpresaDeInvestimentos.Repositorys
         public void AdicionarCliente(Cliente cliente)
         {
             _context.Clientes.Add(cliente);
-            SalvaAlteracoes();
+            SalvarAlteracoes();
         }
 
         public List<Cliente> RecuperarTodosOsClientes()
@@ -53,7 +54,7 @@ namespace ApiEmpresaDeInvestimentos.Repositorys
             }
 
             _context.Remove(cliente);
-            SalvaAlteracoes();
+            SalvarAlteracoes();
 
             return Result.Ok();
         }
