@@ -1,7 +1,7 @@
-﻿using ApiEmpresaDeInvestimentos.Data;
-using ApiEmpresaDeInvestimentos.Data.Dtos.Saque;
+﻿using ApiEmpresaDeInvestimentos.Data.Dtos.Saque;
 using ApiEmpresaDeInvestimentos.Models;
-using ApiEmpresaDeInvestimentos.Repositorys;
+using ApiEmpresaDeInvestimentos.Repositories;
+using ApiEmpresaDeInvestimentos.Services.Interfaces;
 using AutoMapper;
 using FluentResults;
 using System;
@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace ApiEmpresaDeInvestimentos.Services
 {
-    public class SaqueService
+    public class SaqueService : ISaqueService
     {
         private IMapper _mapper;
         private SaqueRepository _saqueRepository;

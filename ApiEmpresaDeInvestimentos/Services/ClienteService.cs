@@ -1,7 +1,8 @@
 ﻿using ApiEmpresaDeInvestimentos.Data;
 using ApiEmpresaDeInvestimentos.Data.Dtos.Cliente;
 using ApiEmpresaDeInvestimentos.Models;
-using ApiEmpresaDeInvestimentos.Repositorys;
+using ApiEmpresaDeInvestimentos.Repositories;
+using ApiEmpresaDeInvestimentos.Services.Interfaces;
 using AutoMapper;
 using FluentResults;
 using System;
@@ -11,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace ApiEmpresaDeInvestimentos.Services
 {
-    public class ClienteService
+    public class ClienteService : IClienteService
     {
         private IMapper _mapper;
         private ClienteRepository _clienteRepository;
@@ -52,7 +53,7 @@ namespace ApiEmpresaDeInvestimentos.Services
                 return Result.Fail("Cliente não encontrado");
             }
             _mapper.Map(clienteDto, cliente);
-            _clienteRepository.SalvaAlteracoes();
+            _clienteRepository.SalvarAlteracoes();
 
             return Result.Ok();
         }

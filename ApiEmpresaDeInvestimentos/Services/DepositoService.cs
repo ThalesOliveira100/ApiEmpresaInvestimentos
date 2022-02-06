@@ -1,10 +1,9 @@
-﻿using ApiEmpresaDeInvestimentos.Data;
-using ApiEmpresaDeInvestimentos.Data.Dtos.Deposito;
+﻿using ApiEmpresaDeInvestimentos.Data.Dtos.Deposito;
 using ApiEmpresaDeInvestimentos.Models;
-using ApiEmpresaDeInvestimentos.Repositorys;
+using ApiEmpresaDeInvestimentos.Repositories;
+using ApiEmpresaDeInvestimentos.Services.Interfaces;
 using AutoMapper;
 using FluentResults;
-using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace ApiEmpresaDeInvestimentos.Services
 {
-    public class DepositoService
+    public class DepositoService : IDepositoService
     {
         private IMapper _mapper;
         private DepositoRepository _depositoRepository;
@@ -47,7 +46,7 @@ namespace ApiEmpresaDeInvestimentos.Services
             return _mapper.Map<List<ReadDepositoDto>>(depositos);
         }
 
-        public Result AtualizarDepositoPorId(Guid id, [FromBody]UpdateDepositoDto depositoDto)
+        public Result AtualizarDepositoPorId(Guid id, UpdateDepositoDto depositoDto)
         {
             Deposito deposito = _depositoRepository.RecuperarDepositoPorId(id);
 

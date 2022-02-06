@@ -50,7 +50,7 @@ namespace ApiEmpresaDeInvestimentos.Controllers
         }
 
         [HttpPut("{id}")]
-        public IActionResult AtualizarDepositoPorId(Guid id, UpdateDepositoDto depositoDto)
+        public IActionResult AtualizarDepositoPorId(Guid id, [FromBody] UpdateDepositoDto depositoDto)
         {
             Result resultado = _depositoService.AtualizarDepositoPorId(id, depositoDto);
 
